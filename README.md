@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 📚 StudyGenie – AI-Powered Study Platform
 
 AI-driven educational web platform that transforms documents into interactive study materials.
@@ -83,3 +84,7 @@ Pull requests are welcome! For major changes, open an issue first to discuss imp
 
 Built with ❤ by Team SunHacks 2024
 Transforming education through AI-powered personalized learning
+=======
+# SunHacks
+StudyGenie – AI-Powered Study Platform -- Hackathon Project
+>>>>>>> 585da3a5733b2eaf7d0e4483fa814c7f03edcfeb
