@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - StudyGenie</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --info-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-light: 0 8px 32px rgba(31, 38, 135, 0.37);
+            --shadow-hover: 0 15px 35px rgba(31, 38, 135, 0.5);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-brand:hover {
+            transform: scale(1.05);
+            color: #f8f9fa !important;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important; 
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            color: white !important;
+            transform: translateY(-2px);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background: white;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .dropdown-menu {
+            border-radius: 15px;
+            box-shadow: var(--shadow-light);
+        }
+        
+        .dropdown-item {
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            margin: 2px 8px;
+        }
+        
+        .dropdown-item:hover {
+            background: rgba(255,255,255,0.2) !important;
+            transform: translateX(5px);
+        }
+        
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: var(--shadow-light);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .hero-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .hero-card:hover::before {
+            left: 100%;
+        }
+        
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: var(--shadow-light);
+            transition: all 0.4s ease;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .stat-card.success::before { background: var(--success-gradient); }
+        .stat-card.warning::before { background: var(--warning-gradient); }
+        .stat-card.info::before { background: var(--info-gradient); }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-icon:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .progress-modern {
+            height: 12px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-bar-modern {
+            background: var(--success-gradient);
+            height: 100%;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            transition: width 1s ease;
+        }
+        
+        .progress-bar-modern::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .btn-modern {
+            border-radius: 12px;
+            font-weight: 500;
+            padding: 0.6rem 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: none;
+        }
+        
+        .btn-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .document-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .document-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(10px);
+        }
+        
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .container {
+            max-width: 1200px;
+        }
+        
+        /* AI Chatbot Styles */
+        .chatbot-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .chatbot-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-light);
+            transition: all 0.3s ease;
+        }
+        
+        .chatbot-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .chatbot-window {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: var(--shadow-light);
+            display: none;
+            flex-direction: column;
+        }
+        
+        .chatbot-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .chatbot-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            max-height: 350px;
+        }
+        
+        .chatbot-input {
+            padding: 1rem;
+            border-top: 1px solid var(--glass-border);
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            max-width: 80%;
+        }
+        
+        .message.user {
+            background: var(--primary-gradient);
+            color: white;
+            margin-left: auto;
+        }
+        
+        .message.bot {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .voice-btn {
+            background: var(--success-gradient);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            transition: all 0.3s ease;
+        }
+        
+        .voice-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .voice-btn.recording {
+            background: var(--warning-gradient);
+            animation: pulse 1s infinite;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-card {
+                margin: 1rem;
+            }
+            
+            .stat-card {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'dashboard' %}">
+                <i class="fas fa-magic me-2"></i>
+                <span>StudyGenie</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'upload_document' %}">
+                            <i class="fas fa-cloud-upload-alt me-1"></i>Upload
+                        </a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-2"></i>
+                            <span>Profile</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2);">
+                            <li><a class="dropdown-item text-white" href="{% url 'profile' %}"><i class="fas fa-user me-2"></i>My Account</a></li>
+                            <li><a class="dropdown-item text-white" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                            <li><hr class="dropdown-divider" style="border-color: rgba(255,255,255,0.2);"></li>
+                            <li><a class="dropdown-item text-white" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="margin-top: 100px;">
+        <!-- Hero Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="hero-card text-center py-5 px-4">
+                    <div class="floating-animation">
+                        <i class="fas fa-magic fa-5x text-white mb-4 pulse-animation"></i>
+                    </div>
+                    <h1 class="display-3 fw-bold text-white mb-3">Welcome to StudyGenie! 🧞‍♂️</h1>
+                    <p class="lead text-white-50 mb-5">Your AI-powered study companion ready to transform your learning experience</p>
+                    
+                    <div class="row g-4 mt-4">
+                        <div class="col-md-3 col-sm-6">
+                            <div class="feature-icon" style="background: var(--info-gradient);">
+                                <i class="fas fa-cloud-upload-alt fa-2x text-white"></i>
+                            </div>
+                            <h6 class="text-white fw-semibold">Upload Documents</h6>
+                            <small class="text-white-50">PDF, Images & More</small>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="feature-icon" style="background: var(--success-gradient);">
+                                <i class="fas fa-brain fa-2x text-white"></i>
+                            </div>
+                            <h6 class="text-white fw-semibold">AI Processing</h6>
+                            <small class="text-white-50">Smart Analysis</small>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="feature-icon" style="background: var(--warning-gradient);">
+                                <i class="fas fa-graduation-cap fa-2x text-white"></i>
+                            </div>
+                            <h6 class="text-white fw-semibold">Smart Learning</h6>
+                            <small class="text-white-50">Personalized Content</small>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="feature-icon" style="background: var(--primary-gradient);">
+                                <i class="fas fa-chart-line fa-2x text-white"></i>
+                            </div>
+                            <h6 class="text-white fw-semibold">Track Progress</h6>
+                            <small class="text-white-50">Analytics & Insights</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card text-white text-center p-4">
+                    <div class="d-flex align-items-center justify-content-center mb-3">
+                        <div class="p-3 rounded-circle" style="background: var(--primary-gradient);">
+                            <i class="fas fa-file-alt fa-2x"></i>
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-1">{{ total_documents|default:0 }}</h2>
+                    <p class="text-white-50 mb-0">Documents Uploaded</p>
+                    <div class="mt-2">
+                        <small class="text-success"><i class="fas fa-arrow-up"></i> +12% this week</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card success text-white text-center p-4">
+                    <div class="d-flex align-items-center justify-content-center mb-3">
+                        <div class="p-3 rounded-circle" style="background: var(--success-gradient);">
+                            <i class="fas fa-question-circle fa-2x"></i>
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-1">{{ total_quizzes|default:0 }}</h2>
+                    <p class="text-white-50 mb-0">Quizzes Completed</p>
+                    <div class="mt-2">
+                        <small class="text-info"><i class="fas fa-arrow-up"></i> +8% this week</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card info text-white text-center p-4">
+                    <div class="d-flex align-items-center justify-content-center mb-3">
+                        <div class="p-3 rounded-circle" style="background: var(--info-gradient);">
+                            <i class="fas fa-chart-line fa-2x"></i>
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-1">{{ avg_score|default:0 }}%</h2>
+                    <p class="text-white-50 mb-0">Average Score</p>
+                    <div class="mt-2">
+                        <small class="text-warning"><i class="fas fa-arrow-up"></i> +5% this week</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card warning text-white text-center p-4">
+                    <div class="d-flex align-items-center justify-content-center mb-3">
+                        <div class="p-3 rounded-circle" style="background: var(--warning-gradient);">
+                            <i class="fas fa-fire fa-2x"></i>
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-1">{{ streak|default:0 }}</h2>
+                    <p class="text-white-50 mb-0">Day Streak 🔥</p>
+                    <div class="mt-2">
+                        <small class="text-danger"><i class="fas fa-fire"></i> Keep it up!</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="glass-card p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="p-3 rounded-circle me-3" style="background: var(--success-gradient);">
+                            <i class="fas fa-chart-bar fa-lg text-white"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-white mb-1 fw-semibold">Overall Progress</h5>
+                            <small class="text-white-50">Your learning journey so far</small>
+                        </div>
+                    </div>
+                    <div class="progress-modern mb-3">
+                        <div class="progress-bar-modern" style="width: {{ avg_score|default:0 }}%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-white fw-semibold">{{ avg_score|default:0 }}% Complete</span>
+                        <span class="text-white-50">🎯 Target: 85%</span>
+                    </div>
+                    <p class="text-white-50 mt-3 mb-0">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>
+                        Keep up the great work! You're making excellent progress on your learning journey.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Section -->
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="glass-card p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="p-3 rounded-circle me-3" style="background: var(--info-gradient);">
+                            <i class="fas fa-clock fa-lg text-white"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-white mb-1 fw-semibold">Recent Documents</h5>
+                            <small class="text-white-50">Your latest study materials</small>
+                        </div>
+                    </div>
+                    
+                    {% if documents %}
+                        {% for doc in documents %}
+                            <div class="document-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="p-2 rounded-circle me-3" style="background: var(--primary-gradient);">
+                                            <i class="fas fa-file-alt text-white"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="text-white mb-1 fw-semibold">{{ doc.title }}</h6>
+                                            <small class="text-white-50">
+                                                <i class="fas fa-calendar-alt me-1"></i>
+                                                {{ doc.created_at|date:"M d, Y" }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <a href="{% url 'summary' doc.id %}" class="btn btn-modern btn-sm" style="background: var(--info-gradient); color: white;">
+                                            <i class="fas fa-eye me-1"></i>View
+                                        </a>
+                                        <a href="{% url 'quiz' doc.id %}" class="btn btn-modern btn-sm" style="background: var(--success-gradient); color: white;">
+                                            <i class="fas fa-question-circle me-1"></i>Quiz
+                                        </a>
+                                        <a href="{% url 'flashcards' doc.id %}" class="btn btn-modern btn-sm" style="background: var(--warning-gradient); color: white;">
+                                            <i class="fas fa-layer-group me-1"></i>Cards
+                                        </a>
+                                                        <a href="{% url 'tutor' doc.id %}" class="btn btn-modern btn-sm" style="background: var(--primary-gradient); color: white;">
+                                            <i class="fas fa-user-graduate me-1"></i>Tutor
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-cloud-upload-alt fa-4x text-white-50 mb-3"></i>
+                            <h6 class="text-white mb-3">No documents uploaded yet</h6>
+                            <p class="text-white-50 mb-4">Upload your first document to get started with AI-powered learning!</p>
+                            <a href="{% url 'upload_document' %}" class="btn btn-modern" style="background: var(--primary-gradient); color: white;">
+                                <i class="fas fa-plus me-2"></i>Upload Document
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="glass-card p-4 mb-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="p-3 rounded-circle me-3" style="background: var(--success-gradient);">
+                            <i class="fas fa-rocket fa-lg text-white"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-white mb-1 fw-semibold">Quick Actions</h5>
+                            <small class="text-white-50">Get started quickly</small>
+                        </div>
+                    </div>
+                    
+                    <a href="{% url 'upload_document' %}" class="btn btn-modern w-100 mb-3 py-3" style="background: var(--primary-gradient); color: white;">
+                        <i class="fas fa-cloud-upload-alt me-2"></i>
+                        <span class="fw-semibold">Upload New Document</span>
+                    </a>
+                    
+                    <div class="mt-4">
+                        <h6 class="text-white fw-semibold mb-3">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>Study Tips
+                        </h6>
+                        <div class="d-flex flex-column gap-3">
+                            <div class="d-flex align-items-center">
+                                <div class="p-2 rounded-circle me-3" style="background: var(--warning-gradient);">
+                                    <i class="fas fa-layer-group text-white"></i>
+                                </div>
+                                <div>
+                                    <small class="text-white fw-medium">Review flashcards daily</small>
+                                    <br><small class="text-white-50">Boost retention by 40%</small>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="p-2 rounded-circle me-3" style="background: var(--success-gradient);">
+                                    <i class="fas fa-target text-white"></i>
+                                </div>
+                                <div>
+                                    <small class="text-white fw-medium">Aim for 70%+ quiz scores</small>
+                                    <br><small class="text-white-50">Optimal learning threshold</small>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="p-2 rounded-circle me-3" style="background: var(--info-gradient);">
+                                    <i class="fas fa-fire text-white"></i>
+                                </div>
+                                <div>
+                                    <small class="text-white fw-medium">Maintain your streak</small>
+                                    <br><small class="text-white-50">Consistency is key</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- AI Chatbot Widget -->
+    <div class="chatbot-widget">
+        <button class="chatbot-toggle" onclick="toggleChatbot()">
+            <i class="fas fa-robot"></i>
+        </button>
+        
+        <div class="chatbot-window" id="chatbot-window">
+            <div class="chatbot-header">
+                <h6 class="text-white mb-0">
+                    <i class="fas fa-robot me-2"></i>AI Study Assistant
+                </h6>
+            </div>
+            
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="message bot">
+                    <i class="fas fa-robot me-2"></i>Hi! I'm your AI study assistant. Ask me anything about your studies!
+                </div>
+            </div>
+            
+            <div class="chatbot-input">
+                <div class="input-group">
+                    <input type="text" id="chatbot-input" class="form-control" placeholder="Ask me anything..." style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
+                    <button class="voice-btn" id="voice-btn" onclick="toggleVoice()">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="btn btn-modern" onclick="sendMessage()" style="background: var(--primary-gradient); color: white;">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Smooth scrolling and animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add loading animation to stats
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+            
+            // Animate progress bar
+            const progressBar = document.querySelector('.progress-bar-modern');
+            if (progressBar) {
+                const width = progressBar.style.width;
+                progressBar.style.width = '0%';
+                setTimeout(() => {
+                    progressBar.style.width = width;
+                }, 1000);
+            }
+            
+            // Add hover effects to document items
+            const docItems = document.querySelectorAll('.document-item');
+            docItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(10px) scale(1.02)';
+                });
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0) scale(1)';
+                });
+            });
+        });
+        
+        // Add particle effect
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.style.position = 'fixed';
+            particle.style.width = '4px';
+            particle.style.height = '4px';
+            particle.style.background = 'rgba(255, 255, 255, 0.5)';
+            particle.style.borderRadius = '50%';
+            particle.style.pointerEvents = 'none';
+            particle.style.zIndex = '1000';
+            particle.style.left = Math.random() * window.innerWidth + 'px';
+            particle.style.top = '-10px';
+            
+            document.body.appendChild(particle);
+            
+            const animation = particle.animate([
+                { transform: 'translateY(0px)', opacity: 1 },
+                { transform: 'translateY(' + (window.innerHeight + 10) + 'px)', opacity: 0 }
+            ], {
+                duration: Math.random() * 3000 + 2000,
+                easing: 'linear'
+            });
+            
+            animation.onfinish = () => particle.remove();
+        }
+        
+        // Create particles occasionally (reduced frequency)
+        setInterval(createParticle, 5000);
+        
+        // AI Chatbot Functions
+        let recognition;
+        let isListening = false;
+        
+        function toggleChatbot() {
+            const window = document.getElementById('chatbot-window');
+            window.style.display = window.style.display === 'flex' ? 'none' : 'flex';
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('chatbot-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            addChatMessage(message, 'user');
+            input.value = '';
+            
+            // Show typing indicator
+            addChatMessage('Thinking...', 'bot', true);
+            
+            // Send to AI chatbot API
+            fetch('/documents/chatbot/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+                },
+                body: JSON.stringify({question: message})
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messages = document.getElementById('chatbot-messages');
+                messages.removeChild(messages.lastChild);
+                addChatMessage(data.response, 'bot');
+                
+                // Text-to-speech for bot response
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(data.response.replace(/<[^>]*>/g, ''));
+                    utterance.rate = 0.8;
+                    utterance.pitch = 1;
+                    speechSynthesis.speak(utterance);
+                }
+            })
+            .catch(error => {
+                const messages = document.getElementById('chatbot-messages');
+                messages.removeChild(messages.lastChild);
+                addChatMessage('Sorry, I encountered an error. Please try again.', 'bot');
+            });
+        }
+        
+        function addChatMessage(text, sender, isTyping = false) {
+            const messages = document.getElementById('chatbot-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            if (sender === 'bot') {
+                messageDiv.innerHTML = `<i class="fas fa-robot me-2"></i>${isTyping ? '<i class="fas fa-spinner fa-spin"></i> ' : ''}${text}`;
+            } else {
+                messageDiv.innerHTML = `${text} <i class="fas fa-user ms-2"></i>`;
+            }
+            
+            messages.appendChild(messageDiv);
+            messages.scrollTop = messages.scrollHeight;
+        }
+        
+        // Add CSRF token to page
+        if (!document.querySelector('[name=csrfmiddlewaretoken]')) {
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = '{{ csrf_token }}';
+            document.body.appendChild(csrfInput);
+        }
+        
+        function toggleVoice() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert('Speech recognition not supported in this browser');
+                return;
+            }
+            
+            if (isListening) {
+                stopListening();
+            } else {
+                startListening();
+            }
+        }
+        
+        function startListening() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+            recognition.maxAlternatives = 1;
+            
+            recognition.onstart = function() {
+                isListening = true;
+                const voiceBtn = document.getElementById('voice-btn');
+                voiceBtn.classList.add('recording');
+                voiceBtn.innerHTML = '<i class="fas fa-stop"></i>';
+            };
+            
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('chatbot-input').value = transcript;
+                stopListening();
+            };
+            
+            recognition.onerror = function(event) {
+                console.error('Speech recognition error:', event.error);
+                stopListening();
+            };
+            
+            recognition.onend = function() {
+                stopListening();
+            };
+            
+            recognition.start();
+        }
+        
+        function stopListening() {
+            if (recognition) {
+                recognition.stop();
+            }
+            
+            isListening = false;
+            const voiceBtn = document.getElementById('voice-btn');
+            voiceBtn.classList.remove('recording');
+            voiceBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+        }
+        
+        // Allow Enter key to send message
+        document.getElementById('chatbot-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Tutor - {{ doc.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 25%, #16213e  50%, #0f3460 75%, #533483 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ffffff;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .navbar {
+            background: rgba(10, 10, 10, 0.8) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .navbar-brand {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .btn-group .btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            margin: 0 2px;
+            border-radius: 15px;
+        }
+        .btn-group .btn.active {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+        }
+        .text-gradient {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        #chat-messages {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border-radius: 15px;
+        }
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #667eea;
+            color: #ffffff;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'dashboard' %}">
+                <i class="fas fa-magic me-2"></i>
+                <span>StudyGenie</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'upload_document' %}">
+                            <i class="fas fa-cloud-upload-alt me-1"></i>Upload
+                        </a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-2"></i>
+                            <span>Profile</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" style="background: rgba(15,15,35,0.9); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1);">
+                            <li><a class="dropdown-item text-white" href="{% url 'profile' %}"><i class="fas fa-user me-2"></i>My Account</a></li>
+                            <li><a class="dropdown-item text-white" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                            <li><hr class="dropdown-divider" style="border-color: rgba(255,255,255,0.2);"></li>
+                            <li><a class="dropdown-item text-white" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4 px-0">
+        <div class="row g-0">
+            <div class="col-12">
+                <h3 class="text-gradient mb-4"><i class="fas fa-robot"></i> AI Tutor: {{ doc.title }}</h3>
+                
+                <div class="btn-group mb-4" role="group">
+                    <a href="{% url 'summary' doc.id %}" class="btn">Summary</a>
+                    <a href="{% url 'quiz' doc.id %}" class="btn">Quiz</a>
+                    <a href="{% url 'flashcards' doc.id %}" class="btn">Flashcards</a>
+                    <button type="button" class="btn active">AI Tutor</button>
+                </div>
+
+                <div class="glass-card p-4 mx-3" style="min-height: calc(100vh - 200px);">
+                    <div class="mb-3">
+                        <h5 class="text-gradient"><i class="fas fa-comments"></i> Ask Your AI Tutor</h5>
+                    </div>
+                    
+                    <div id="chat-messages" style="height: calc(100vh - 300px); overflow-y: auto; padding: 15px; margin-bottom: 15px;">
+                        <div class="alert alert-info">
+                            <i class="fas fa-robot"></i> Hi! I'm your AI tutor for "{{ doc.title }}". I have access to your document content.
+                        </div>
+                        {% if doc.extracted_text %}
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i> <strong>Document Ready:</strong> {{ doc.title }}<br>
+                            <small><i class="fas fa-file-text"></i> Content: {{ doc.extracted_text|length }} characters | 
+                            <i class="fas fa-brain"></i> Summary: {{ doc.summary|length }} characters | 
+                            <i class="fas fa-calendar"></i> Uploaded: {{ doc.created_at|date:"M d, Y" }}</small><br>
+                            <small class="text-muted">💡 I have full access to your document content and can answer specific questions about it!</small>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i> <strong>Limited Content:</strong> Document processing incomplete<br>
+                            <small>I'll provide general study guidance, but document-specific answers may be limited.</small>
+                        </div>
+                        {% endif %}
+                        
+                        {% if doc.summary %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-lightbulb"></i> <strong>Quick Preview:</strong><br>
+                            <small>{{ doc.summary|truncatewords:30 }}</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-outline-info btn-sm" onclick="askTestQuestion()">
+                                <i class="fas fa-flask"></i> Test Document Access
+                            </button>
+                            <button class="btn btn-outline-success btn-sm" onclick="askSummaryQuestion()">
+                                <i class="fas fa-list"></i> What's this about?
+                            </button>
+                            <button class="btn btn-outline-warning btn-sm" onclick="askKeyPointsQuestion()">
+                                <i class="fas fa-key"></i> Key Points
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <input type="text" id="question-input" class="form-control" placeholder="Ask a question about your study material...">
+                        <button class="btn btn-primary" onclick="askQuestion()">
+                            <i class="fas fa-paper-plane"></i> Ask
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function askQuestion() {
+            const input = document.getElementById('question-input');
+            const question = input.value.trim();
+            
+            if (!question) return;
+            
+            // Add user question to chat
+            addMessage(question, 'user');
+            input.value = '';
+            
+            // Show loading
+            addMessage('Thinking...', 'bot', true);
+            
+            // Send to AI tutor with timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+            
+            fetch('/documents/tutor/{{ doc.id }}/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({question: question}),
+                signal: controller.signal
+            })
+            .then(response => {
+                clearTimeout(timeoutId);
+                return response.json();
+            })
+            .then(data => {
+                // Remove loading message
+                const messages = document.getElementById('chat-messages');
+                if (messages.lastChild) messages.removeChild(messages.lastChild);
+                
+                // Add AI response
+                addMessage(data.response, 'bot');
+            })
+            .catch(error => {
+                clearTimeout(timeoutId);
+                const messages = document.getElementById('chat-messages');
+                if (messages.lastChild) messages.removeChild(messages.lastChild);
+                
+                if (error.name === 'AbortError') {
+                    addMessage('Response taking too long. Please try a shorter question.', 'bot');
+                } else {
+                    addMessage('Error occurred. Please try again with a simpler question.', 'bot');
+                }
+            });
+        }
+        
+        function addMessage(text, sender, isLoading = false) {
+            const messages = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `mb-3 ${sender === 'user' ? 'text-end' : ''}`;
+            
+            const badge = sender === 'user' ? 'bg-primary' : 'bg-secondary';
+            const icon = sender === 'user' ? 'fa-user' : 'fa-robot';
+            
+            messageDiv.innerHTML = `
+                <div class="d-inline-block">
+                    <span class="badge ${badge} mb-1">
+                        <i class="fas ${icon}"></i> ${sender === 'user' ? 'You' : 'AI Tutor'}
+                    </span>
+                    <div class="card ${sender === 'user' ? 'bg-primary text-white' : 'bg-light'}">
+                        <div class="card-body py-2 px-3" style="line-height: 1.5;">
+                            ${isLoading ? '<i class="fas fa-spinner fa-spin"></i> ' : ''}${text}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            messages.appendChild(messageDiv);
+            messages.scrollTop = messages.scrollHeight;
+        }
+        
+        // Test functions for quick verification
+        function askTestQuestion() {
+            document.getElementById('question-input').value = 'Can you tell me what this document is about and confirm you have access to its content?';
+            askQuestion();
+        }
+        
+        function askSummaryQuestion() {
+            document.getElementById('question-input').value = 'What are the main topics covered in this document?';
+            askQuestion();
+        }
+        
+        function askKeyPointsQuestion() {
+            document.getElementById('question-input').value = 'What are the key points I should focus on from this material?';
+            askQuestion();
+        }
+        
+        // Allow Enter key to send message
+        document.getElementById('question-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                askQuestion();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+
+        Machine Learning Fundamentals
+        
+        Machine learning is a subset of artificial intelligence that enables computers to learn 
+        and make decisions from data without being explicitly programmed for every task.
+        
+        Key Types:
+        1. Supervised Learning - Uses labeled training data
+        2. Unsupervised Learning - Finds patterns in unlabeled data  
+        3. Reinforcement Learning - Learns through trial and error
+        
+        Common algorithms include linear regression, decision trees, neural networks, and clustering.
+        Applications span from recommendation systems to autonomous vehicles.
+        

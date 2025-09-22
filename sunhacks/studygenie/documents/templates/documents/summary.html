@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ doc.title }} - StudyGenie</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 25%, #16213e  50%, #0f3460 75%, #533483 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .navbar {
+            background: rgba(10, 10, 10, 0.8) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .navbar-brand {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .btn-cyber {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-cyber::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn-cyber:hover::before { left: 100%; }
+        .btn-cyber:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        .btn-group .btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            margin: 0 2px;
+            border-radius: 15px;
+        }
+        .btn-group .btn.active {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+        }
+        .alert-cyber {
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 15px;
+            color: #ffffff;
+        }
+        .badge-cyber {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        .text-gradient {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .floating-animation {
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .summary-text p {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+        .summary-text ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .summary-text li {
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .summary-text li:before {
+            content: '•';
+            color: #667eea;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+        }
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border-color: rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'dashboard' %}">
+                <i class="fas fa-magic me-2"></i>
+                <span>StudyGenie</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'upload_document' %}">
+                            <i class="fas fa-cloud-upload-alt me-1"></i>Upload
+                        </a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-2"></i>
+                            <span>Profile</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" style="background: rgba(15,15,35,0.9); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1);">
+                            <li><a class="dropdown-item text-white" href="{% url 'profile' %}"><i class="fas fa-user me-2"></i>My Account</a></li>
+                            <li><a class="dropdown-item text-white" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                            <li><hr class="dropdown-divider" style="border-color: rgba(255,255,255,0.2);"></li>
+                            <li><a class="dropdown-item text-white" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-12">
+                <h3 class="text-gradient mb-4"><i class="fas fa-file-alt"></i> {{ doc.title }}</h3>
+                
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn active">Summary</button>
+                        <a href="{% url 'quiz' doc.id %}" class="btn">Quiz</a>
+                        <a href="{% url 'flashcards' doc.id %}" class="btn">Flashcards</a>
+                        <a href="{% url 'tutor' doc.id %}" class="btn">AI Tutor</a>
+                    </div>
+                    
+                    <!-- Language Selector -->
+                    <div class="dropdown">
+                        <button class="btn btn-sm dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="background: linear-gradient(45deg, #667eea 0%, #764ba2 100%); border: none; color: white; border-radius: 15px;">
+                            <i class="fas fa-globe me-1"></i>
+                            {% for code, name in available_languages %}
+                                {% if code == current_language %}{{ name }}{% endif %}
+                            {% endfor %}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown" style="background: rgba(15,15,35,0.9); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1);">
+                            {% for code, name in available_languages %}
+                                <li>
+                                    <a class="dropdown-item text-white {% if code == current_language %}active{% endif %}" href="#" onclick="event.preventDefault(); switchLanguage('{{ code }}')">
+                                        <i class="fas fa-language me-2"></i>{{ name }}
+                                        {% if code == current_language %}<i class="fas fa-check ms-2"></i>{% endif %}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4 mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center">
+                            <h5 class="text-gradient mb-0"><i class="fas fa-magic"></i> AI-Generated Summary</h5>
+                            <small class="ms-3 opacity-75">Powered by Google Gemini AI</small>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm" onclick="translateSummary()" style="background: linear-gradient(45deg, #11998e 0%, #38ef7d 100%); border: none; color: white; border-radius: 12px;">
+                                <i class="fas fa-language"></i> Translate
+                            </button>
+                            <button class="btn btn-sm" onclick="generateMultilingualQuiz()" style="background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%); border: none; color: white; border-radius: 12px;">
+                                <i class="fas fa-question-circle"></i> Quiz in Language
+                            </button>
+                        </div>
+                    </div>
+                    
+                    {% if summary and summary|length > 10 %}
+                        <div class="alert-cyber p-3 mb-4">
+                            <i class="fas fa-lightbulb"></i> <strong>AI-Generated Summary:</strong>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="text-gradient mb-0"><i class="fas fa-file-text"></i> Summary</h6>
+                            <div class="audio-controls">
+                                <button id="playBtn" class="btn btn-sm" style="background: linear-gradient(45deg, #667eea 0%, #764ba2 100%); border: none; color: white; border-radius: 20px; padding: 8px 16px;">
+                                    <i class="fas fa-play"></i> Listen
+                                </button>
+                                <button id="pauseBtn" class="btn btn-sm" style="background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%); border: none; color: white; border-radius: 20px; padding: 8px 16px; display: none;">
+                                    <i class="fas fa-pause"></i> Pause
+                                </button>
+                                <button id="stopBtn" class="btn btn-sm" style="background: linear-gradient(45deg, #11998e 0%, #38ef7d 100%); border: none; color: white; border-radius: 20px; padding: 8px 16px; display: none;">
+                                    <i class="fas fa-stop"></i> Stop
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="summary-content" id="summaryText" style="background: rgba(255,255,255,0.03); border-radius: 15px; padding: 20px; border-left: 4px solid #667eea;">
+                            <div class="summary-text" style="line-height: 1.8; font-size: 1.1rem; color: #e8e8e8;">
+                                {% if '\n\n' in summary or '•' in summary %}
+                                    {{ summary|linebreaksbr|safe }}
+                                {% else %}
+                                    <p>{{ summary }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% elif doc.summary and doc.summary|length > 10 %}
+                        <div class="summary-content" id="summaryText" style="background: rgba(255,255,255,0.03); border-radius: 15px; padding: 20px; border-left: 4px solid #667eea;">
+                            <div class="summary-text" style="line-height: 1.8; font-size: 1.1rem; color: #e8e8e8;">
+                                {% if '\n\n' in doc.summary or '•' in doc.summary %}
+                                    {{ doc.summary|linebreaksbr|safe }}
+                                {% else %}
+                                    <p>{{ doc.summary }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% elif extracted_text %}
+                        <div class="alert-cyber p-3 mb-4">
+                            <i class="fas fa-info-circle"></i> <strong>Document Content Preview:</strong>
+                        </div>
+                        <div class="summary-content">
+                            <div class="lead" style="white-space: pre-wrap; line-height: 1.6; word-wrap: break-word;">{{ extracted_text|truncatewords:100|safe }}</div>
+                            <p class="mt-3 text-muted"><em>AI summary generation failed. Showing document preview.</em></p>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i> No content available. Please try uploading the document again.
+                        </div>
+                    {% endif %}
+                    
+                    <hr class="my-4" style="border-color: rgba(255, 255, 255, 0.2);">
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-gradient"><i class="fas fa-info-circle"></i> Document Details</h6>
+                            <ul class="list-unstyled">
+                                <li><strong>File:</strong> {{ doc.title }}</li>
+                                <li><strong>Uploaded:</strong> {{ doc.created_at|date:"M d, Y H:i" }}</li>
+                                <li><strong>Status:</strong> <span class="badge-cyber">{{ doc.status|title }}</span></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-gradient"><i class="fas fa-chart-bar"></i> Content Stats</h6>
+                            <ul class="list-unstyled">
+                                <li><strong>Text Length:</strong> {{ doc.extracted_text|length }} characters</li>
+                                <li><strong>Word Count:</strong> ~{{ doc.extracted_text|wordcount }} words</li>
+                                <li><strong>AI Processing:</strong> <span class="badge-cyber">Complete</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz Preview - Different Difficulty Levels -->
+                <div class="glass-card p-4 mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="text-gradient mb-0"><i class="fas fa-question-circle"></i> Quiz Questions Available</h5>
+                        <button class="btn btn-sm" onclick="generateQuizInLanguage()" style="background: linear-gradient(45deg, #667eea 0%, #764ba2 100%); border: none; color: white; border-radius: 12px;">
+                            <i class="fas fa-globe"></i> Generate in Current Language
+                        </button>
+                    </div>
+                    <div class="row" id="quizPreview">
+                        <div class="col-md-4">
+                            <div class="text-center p-3" style="background: rgba(17, 153, 142, 0.2); border-radius: 15px; margin-bottom: 10px;">
+                                <h6 class="text-white mb-2"><i class="fas fa-seedling"></i> Easy</h6>
+                                <p class="text-white-50 mb-2">{{ quiz_easy|length }} factual questions</p>
+                                <a href="{% url 'quiz' doc.id %}?difficulty=easy&lang={{ current_language }}" class="btn btn-sm" style="background: linear-gradient(45deg, #11998e 0%, #38ef7d 100%); border: none; color: white; border-radius: 12px;">
+                                    Start Easy Quiz
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center p-3" style="background: rgba(102, 126, 234, 0.2); border-radius: 15px; margin-bottom: 10px;">
+                                <h6 class="text-white mb-2"><i class="fas fa-balance-scale"></i> Medium</h6>
+                                <p class="text-white-50 mb-2">{{ quiz_medium|length }} application questions</p>
+                                <a href="{% url 'quiz' doc.id %}?difficulty=medium&lang={{ current_language }}" class="btn btn-sm" style="background: linear-gradient(45deg, #667eea 0%, #764ba2 100%); border: none; color: white; border-radius: 12px;">
+                                    Start Medium Quiz
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center p-3" style="background: rgba(240, 147, 251, 0.2); border-radius: 15px; margin-bottom: 10px;">
+                                <h6 class="text-white mb-2"><i class="fas fa-fire"></i> Hard</h6>
+                                <p class="text-white-50 mb-2">{{ quiz_hard|length }} analytical questions</p>
+                                <a href="{% url 'quiz' doc.id %}?difficulty=hard&lang={{ current_language }}" class="btn btn-sm" style="background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%); border: none; color: white; border-radius: 12px;">
+                                    Start Hard Quiz
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Flashcards Preview -->
+                {% if flashcards %}
+                <div class="glass-card p-4 mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="text-gradient mb-0"><i class="fas fa-layer-group"></i> Flashcards Available</h5>
+                        <button class="btn btn-sm" onclick="generateFlashcardsInLanguage()" style="background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%); border: none; color: white; border-radius: 12px;">
+                            <i class="fas fa-globe"></i> Generate in Current Language
+                        </button>
+                    </div>
+                    <p class="text-white-50 mb-3">{{ flashcards|length }} AI-generated flashcards ready for review.</p>
+                    <a href="{% url 'flashcards' doc.id %}?lang={{ current_language }}" class="btn btn-sm" style="background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%); border: none; color: white; border-radius: 15px;">
+                        <i class="fas fa-cards-blank"></i> Review Flashcards
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- YouTube Video Recommendations -->
+                <div class="glass-card p-4 mb-4">
+                    <h5 class="text-gradient mb-4"><i class="fab fa-youtube"></i> Recommended YouTube Videos</h5>
+                    
+                    {% if youtube_keywords %}
+                    <div class="alert" style="background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.2); border-radius: 12px; margin-bottom: 15px;">
+                        <p class="text-white mb-2"><i class="fas fa-key"></i> <strong>Based on keywords:</strong></p>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for keyword in youtube_keywords %}
+                            <span class="badge" style="background: linear-gradient(45deg, #ff0000, #cc0000); padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">
+                                {{ keyword }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if videos and videos|length > 0 %}
+                    <div class="row">
+                        {% for video in videos|slice:":5" %}
+                        <div class="col-md-4 mb-4">
+                            <div class="video-card" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 15px; transition: all 0.3s ease;">
+                                <div class="video-thumbnail mb-3" style="position: relative;">
+                                    <div style="width: 100%; height: 180px; background: linear-gradient(45deg, #1a1a2e, #16213e); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fab fa-youtube" style="font-size: 3rem; color: #ff0000;"></i>
+                                    </div>
+                                    <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.8); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem;">
+                                        <i class="fab fa-youtube"></i>
+                                    </div>
+                                </div>
+                                
+                                <h6 class="text-white mb-2" style="font-size: 0.9rem; line-height: 1.3; height: 2.6rem; overflow: hidden;">
+                                    <a href="{{ video.url }}" target="_blank" style="color: #ffffff; text-decoration: none;">
+                                        {{ video.title|truncatechars:60 }}
+                                    </a>
+                                </h6>
+                                <p class="text-white-50 mb-3" style="font-size: 0.8rem;">
+                                    <i class="fas fa-user"></i> {{ video.channel|truncatechars:25 }}
+                                </p>
+                                <a href="{{ video.url }}" target="_blank" class="btn btn-sm w-100" style="background: linear-gradient(45deg, #ff0000, #cc0000); border: none; color: white; border-radius: 15px; font-size: 0.8rem;">
+                                    <i class="fab fa-youtube"></i> Watch Video
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fab fa-youtube fa-3x text-white-50 mb-3"></i>
+                        <h6 class="text-white mb-3">No related videos found</h6>
+                        <p class="text-white-50 mb-3">Try searching YouTube manually for related content.</p>
+                        <a href="https://www.youtube.com/results?search_query={{ doc.title|urlencode }}+tutorial" target="_blank" class="btn btn-sm" style="background: linear-gradient(45deg, #ff0000, #cc0000); border: none; color: white; border-radius: 15px;">
+                            <i class="fab fa-youtube"></i> Search YouTube
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="text-center">
+                    <a href="{% url 'quiz' doc.id %}" class="btn-cyber me-3">
+                        <i class="fas fa-question-circle"></i> Take Quiz
+                    </a>
+                    <a href="{% url 'flashcards' doc.id %}" class="btn-cyber me-3">
+                        <i class="fas fa-cards-blank"></i> Review Flashcards
+                    </a>
+                    <a href="{% url 'tutor' doc.id %}" class="btn-cyber">
+                        <i class="fas fa-robot"></i> Ask AI Tutor
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% csrf_token %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Text-to-Speech functionality
+        let speechSynthesis = window.speechSynthesis;
+        let utterance = null;
+        let isPlaying = false;
+        
+        const playBtn = document.getElementById('playBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const summaryText = document.getElementById('summaryText');
+        
+        function getSummaryText() {
+            return summaryText.innerText || summaryText.textContent || '';
+        }
+        
+        playBtn.addEventListener('click', function() {
+            const text = getSummaryText();
+            
+            if (!text) {
+                alert('No summary text available to read.');
+                return;
+            }
+            
+            if (speechSynthesis.paused) {
+                speechSynthesis.resume();
+            } else {
+                utterance = new SpeechSynthesisUtterance(text);
+                
+                // Configure speech settings
+                utterance.rate = 0.9;
+                utterance.pitch = 1;
+                utterance.volume = 1;
+                
+                // Try to use a natural voice
+                const voices = speechSynthesis.getVoices();
+                const preferredVoice = voices.find(voice => 
+                    voice.lang.startsWith('en') && 
+                    (voice.name.includes('Natural') || voice.name.includes('Google') || voice.name.includes('Microsoft'))
+                ) || voices.find(voice => voice.lang.startsWith('en')) || voices[0];
+                
+                if (preferredVoice) {
+                    utterance.voice = preferredVoice;
+                }
+                
+                utterance.onstart = function() {
+                    isPlaying = true;
+                    playBtn.style.display = 'none';
+                    pauseBtn.style.display = 'inline-block';
+                    stopBtn.style.display = 'inline-block';
+                };
+                
+                utterance.onend = function() {
+                    resetControls();
+                };
+                
+                utterance.onerror = function(event) {
+                    console.error('Speech synthesis error:', event);
+                    alert('Error playing audio. Please try again.');
+                    resetControls();
+                };
+                
+                speechSynthesis.speak(utterance);
+            }
+        });
+        
+        pauseBtn.addEventListener('click', function() {
+            if (speechSynthesis.speaking) {
+                speechSynthesis.pause();
+                pauseBtn.innerHTML = '<i class="fas fa-play"></i> Resume';
+            }
+        });
+        
+        stopBtn.addEventListener('click', function() {
+            speechSynthesis.cancel();
+            resetControls();
+        });
+        
+        function resetControls() {
+            isPlaying = false;
+            playBtn.style.display = 'inline-block';
+            pauseBtn.style.display = 'none';
+            stopBtn.style.display = 'none';
+            pauseBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+        }
+        
+        // Load voices when available
+        speechSynthesis.onvoiceschanged = function() {
+            // Voices are now loaded
+        };
+        
+        // Stop speech when leaving page
+        window.addEventListener('beforeunload', function() {
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+            }
+        });
+        
+        // Multilingual functionality
+        function switchLanguage(langCode) {
+            // Show loading indicator
+            const summaryContent = document.querySelector('.summary-content');
+            if (summaryContent) {
+                summaryContent.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Translating content...</p></div>';
+            }
+            
+            // If switching to non-English, translate immediately
+            if (langCode !== 'en') {
+                translateToLanguage(langCode);
+            } else {
+                // Redirect to English version
+                window.location.href = `?lang=${langCode}`;
+            }
+        }
+        
+        function translateToLanguage(langCode) {
+            const docId = '{{ doc.id }}';
+            
+            fetch(`/documents/${docId}/translate/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    language: langCode
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const summaryContent = document.querySelector('.summary-content');
+                    if (summaryContent) {
+                        summaryContent.innerHTML = `<div class="summary-text" style="line-height: 1.8; font-size: 1.1rem; color: #e8e8e8;">${data.translation.replace(/\n/g, '<br>')}</div>`;
+                    }
+                    // Update URL without reload
+                    window.history.pushState({}, '', `?lang=${langCode}`);
+                } else {
+                    alert('Translation failed: ' + data.error);
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Translation error:', error);
+                alert('Translation failed. Please try again.');
+                window.location.reload();
+            });
+        }
+        
+        function translateSummary() {
+            const currentLang = '{{ current_language }}';
+            translateToLanguage(currentLang);
+        }
+        
+        function generateQuizInLanguage() {
+            const currentLang = '{{ current_language }}';
+            const docId = '{{ doc.id }}';
+            
+            // Show loading
+            const quizPreview = document.getElementById('quizPreview');
+            quizPreview.innerHTML = '<div class="col-12 text-center py-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Generating quiz in current language...</p></div>';
+            
+            fetch(`/documents/${docId}/quiz-lang/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    language: currentLang,
+                    difficulty: 'medium'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    quizPreview.innerHTML = `
+                        <div class="col-12 text-center">
+                            <div class="alert" style="background: rgba(17, 153, 142, 0.2); border: 1px solid rgba(17, 153, 142, 0.3); border-radius: 12px;">
+                                <i class="fas fa-check-circle"></i> Quiz generated in ${data.language}! 
+                                <strong>${data.quiz.length} questions</strong> ready.
+                            </div>
+                            <a href="/quizzes/${docId}/?lang=${currentLang}" class="btn btn-sm" style="background: linear-gradient(45deg, #667eea 0%, #764ba2 100%); border: none; color: white; border-radius: 12px;">
+                                <i class="fas fa-play"></i> Start Quiz in Current Language
+                            </a>
+                        </div>
+                    `;
+                } else {
+                    quizPreview.innerHTML = '<div class="col-12 text-center py-4"><div class="alert alert-danger">Failed to generate quiz: ' + data.error + '</div></div>';
+                }
+            })
+            .catch(error => {
+                console.error('Quiz generation error:', error);
+                quizPreview.innerHTML = '<div class="col-12 text-center py-4"><div class="alert alert-danger">Quiz generation failed. Please try again.</div></div>';
+            });
+        }
+        
+        function generateFlashcardsInLanguage() {
+            const currentLang = '{{ current_language }}';
+            const docId = '{{ doc.id }}';
+            
+            fetch(`/documents/${docId}/flashcards-lang/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    language: currentLang
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`Flashcards generated in ${data.language}! ${data.flashcards.length} cards ready.`);
+                    window.location.href = `/flashcards/${docId}/?lang=${currentLang}`;
+                } else {
+                    alert('Failed to generate flashcards: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Flashcard generation error:', error);
+                alert('Flashcard generation failed. Please try again.');
+            });
+        }
+        
+        function generateMultilingualQuiz() {
+            const currentLang = '{{ current_language }}';
+            alert(`Generating quiz in ${currentLang}. This will create questions specifically in your selected language.`);
+            generateQuizInLanguage();
+        }
+    </script>
+</body>
+</html>

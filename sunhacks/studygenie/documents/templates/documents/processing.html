@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Document - StudyGenie</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .processing-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .ai-brain {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .progress-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 2rem 0;
+        }
+        
+        .progress {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200px 0; }
+            100% { background-position: 200px 0; }
+        }
+        
+        .processing-steps {
+            margin-top: 2rem;
+            text-align: left;
+            max-width: 400px;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+        
+        .step.active {
+            opacity: 1;
+            color: #667eea;
+        }
+        
+        .step.completed {
+            opacity: 1;
+            color: #38ef7d;
+        }
+        
+        .step i {
+            margin-right: 1rem;
+            width: 20px;
+        }
+        
+        .fun-facts {
+            margin-top: 3rem;
+            max-width: 600px;
+        }
+        
+        .fact {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+            border-left: 4px solid #667eea;
+            display: none;
+        }
+        
+        .fact.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="processing-container">
+        <div class="ai-brain">
+            <i class="fas fa-brain fa-3x text-white"></i>
+        </div>
+        
+        <h2 class="mb-3">🤖 AI is Processing Your Document</h2>
+        <p class="text-white-50 mb-4">Generating intelligent study materials just for you...</p>
+        
+        <div class="progress-container">
+            <div class="progress">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            </div>
+            <p class="mt-2"><span id="progressText">Starting...</span> <span id="progressPercent">0%</span></p>
+        </div>
+        
+        <div class="processing-steps">
+            <div class="step" id="step1">
+                <i class="fas fa-file-text"></i>
+                <span>Extracting text from document</span>
+            </div>
+            <div class="step" id="step2">
+                <i class="fas fa-magic"></i>
+                <span>Generating AI summary</span>
+            </div>
+            <div class="step" id="step3">
+                <i class="fas fa-question-circle"></i>
+                <span>Creating quiz questions</span>
+            </div>
+            <div class="step" id="step4">
+                <i class="fas fa-cards-blank"></i>
+                <span>Building flashcards</span>
+            </div>
+            <div class="step" id="step5">
+                <i class="fab fa-youtube"></i>
+                <span>Finding relevant videos</span>
+            </div>
+        </div>
+        
+        <div class="fun-facts">
+            <div class="fact" id="fact1">
+                <h6><i class="fas fa-lightbulb"></i> Study Tip</h6>
+                <p>Active recall is 3x more effective than passive reading. Quiz yourself regularly!</p>
+            </div>
+            <div class="fact" id="fact2">
+                <h6><i class="fas fa-brain"></i> Did You Know?</h6>
+                <p>Spaced repetition can improve long-term retention by up to 200%.</p>
+            </div>
+            <div class="fact" id="fact3">
+                <h6><i class="fas fa-clock"></i> Learning Fact</h6>
+                <p>The average attention span for focused learning is 25-30 minutes. Take breaks!</p>
+            </div>
+            <div class="fact" id="fact4">
+                <h6><i class="fas fa-star"></i> Memory Tip</h6>
+                <p>Creating visual associations can improve memory retention by up to 65%.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentStep = 0;
+        let currentFact = 0;
+        const steps = ['step1', 'step2', 'step3', 'step4', 'step5'];
+        const stepTexts = [
+            'Extracting text...',
+            'Generating summary...',
+            'Creating quizzes...',
+            'Building flashcards...',
+            'Finding videos...'
+        ];
+        const facts = ['fact1', 'fact2', 'fact3', 'fact4'];
+        
+        function updateProgress() {
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const progressPercent = document.getElementById('progressPercent');
+            
+            if (currentStep < steps.length) {
+                // Update progress
+                const progress = ((currentStep + 1) / steps.length) * 100;
+                progressBar.style.width = progress + '%';
+                progressPercent.textContent = Math.round(progress) + '%';
+                progressText.textContent = stepTexts[currentStep];
+                
+                // Update step status
+                if (currentStep > 0) {
+                    document.getElementById(steps[currentStep - 1]).classList.remove('active');
+                    document.getElementById(steps[currentStep - 1]).classList.add('completed');
+                }
+                document.getElementById(steps[currentStep]).classList.add('active');
+                
+                currentStep++;
+                
+                // Continue processing
+                setTimeout(updateProgress, 2000 + Math.random() * 2000);
+            } else {
+                // Processing complete
+                progressBar.style.width = '100%';
+                progressPercent.textContent = '100%';
+                progressText.textContent = 'Complete!';
+                
+                document.getElementById(steps[steps.length - 1]).classList.remove('active');
+                document.getElementById(steps[steps.length - 1]).classList.add('completed');
+                
+                setTimeout(() => {
+                    window.location.href = '{% url "summary" doc.id %}';
+                }, 1000);
+            }
+        }
+        
+        function showFacts() {
+            // Hide current fact
+            if (currentFact > 0) {
+                document.getElementById(facts[currentFact - 1]).classList.remove('show');
+            }
+            
+            // Show next fact
+            if (currentFact < facts.length) {
+                document.getElementById(facts[currentFact]).classList.add('show');
+                currentFact++;
+            } else {
+                currentFact = 0;
+            }
+        }
+        
+        // Start processing simulation
+        setTimeout(updateProgress, 1000);
+        
+        // Show facts every 4 seconds
+        setInterval(showFacts, 4000);
+        showFacts(); // Show first fact immediately
+    </script>
+</body>
+</html>
