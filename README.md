@@ -68,7 +68,7 @@ Gamified learning with achievements
 
 📋 Roadmap (Future Enhancements)
 
-📱 Mobile app (iOS & Android)
+📱 Web Application (Support in every Browser)
 
 👥 Collaborative group study features
 
